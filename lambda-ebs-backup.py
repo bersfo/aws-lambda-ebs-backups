@@ -99,10 +99,19 @@ def lambda_handler(event, context):
                     retention_days,
                 )
 
+                instance_tags = ''
+                if 'Tags' in instance:
+                    for tag in instance['Tags']:
+                        instance_tags = instance_tags + tag['Key'] + '=' + tag['Value'] + ' + '
+                else:
+                    instance_tags = '<no tags>'
+                
                 ec.create_tags(
                     Resources=to_tag_mount_point[vol_id],
                     Tags=[
                         {'Key': 'Name', 'Value': dev_attachment},
+                        {'Key': 'Private IP Address', 'Value': instance['PrivateIpAddress']},
+                        {'Key': 'Instance Tags', 'Value': instance_tags},
                     ]
                 )
 
